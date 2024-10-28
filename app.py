@@ -1,8 +1,3 @@
-'''import tkinter as tk
-from tkinter import simpledialog, messagebox
-from flask import Flask, jsonify, request
-import threading '''
-
 from flask import Flask, jsonify, request, render_template, redirect, url_for
 import threading
 
@@ -151,57 +146,6 @@ def api_evaluate_rule():
 def get_rules():
     return jsonify({name: rule.value for name, rule in rule_store.items()}), 200
 
-
-
-'''# GUI Class for the Rule Engine App
-class RuleEngineApp:
-    def __init__(self, master):
-        self.master = master
-        master.title("Simple Rule Engine App")
-
-        self.label = tk.Label(master, text="Simple Rule Engine")
-        self.label.pack()
-
-        self.create_button = tk.Button(master, text="Create Rule", command=self.create_rule)
-        self.create_button.pack()
-
-        self.combine_button = tk.Button(master, text="Combine Rules", command=self.combine_rules)
-        self.combine_button.pack()
-
-        self.evaluate_button = tk.Button(master, text="Evaluate Rule", command=self.evaluate_rule_gui)
-        self.evaluate_button.pack()
-
-        self.exit_button = tk.Button(master, text="Exit", command=master.quit)
-        self.exit_button.pack()
-
-    def create_rule(self):
-        rule_name = simpledialog.askstring("Input", "Enter rule name:")
-        rule_string = simpledialog.askstring("Input", "Enter rule (e.g., age > 30 AND salary > 50000):")
-        
-        if rule_name and rule_string:
-            rule_store[rule_name] = create_rule(rule_string)
-            messagebox.showinfo("Success", f"Rule {rule_name} created!")
-
-    def combine_rules(self):
-        rule_name = simpledialog.askstring("Input", "Enter combined rule name:")
-        rule_list = simpledialog.askstring("Input", "Enter rule names to combine (comma-separated):").split(",")
-        operator = simpledialog.askstring("Input", "Enter combination operator (AND/OR):").strip()
-        
-        if rule_name and rule_list and operator in ["AND", "OR"]:
-            combined_ast = combine_rules(rule_list, operator)
-            rule_store[rule_name] = combined_ast
-            messagebox.showinfo("Success", f"Combined rule {rule_name} created!")
-
-    def evaluate_rule_gui(self):
-        rule_name = simpledialog.askstring("Input", "Enter rule name to evaluate:")
-        
-        if rule_name in rule_store:
-            result = evaluate_rule(rule_store[rule_name], data)  # Use predefined data for evaluation
-            messagebox.showinfo("Result", f"Evaluation Result: {result}")
-        else:
-            messagebox.showerror("Error", f"Rule {rule_name} does not exist.")
-'''
-
 # Route for the web application
 @app.route('/')
 def index():
@@ -217,9 +161,3 @@ if __name__ == "__main__":
     # Start the Flask app in a separate thread
     flask_thread = threading.Thread(target=run_flask)
     flask_thread.start()
-
-'''   # Start the Tkinter GUI app
-    root = tk.Tk()
-    app = RuleEngineApp(root)
-    root.mainloop()
-'''

@@ -10,7 +10,6 @@ This project is a RESTful API for creating, combining, and evaluating rules base
 - [Installation](#installation)
 - [Running the Application](#running-the-application)
 - [API Endpoints](#api-endpoints)
-- [Examples](#examples)
 
 ## Overview
 
@@ -76,7 +75,7 @@ python app.py
   }
 
   Response:
-      json
+    ```json
     {
         "ast": "<AST_representation>"
     }
@@ -90,7 +89,7 @@ python app.py
   }
 
   Response:
-      json
+    ```json
     {
         "combined_ast": "<Combined_AST_representation>"
     }
@@ -105,7 +104,7 @@ python app.py
   }
 
   Response:
-      json
+    ```json
     {
         "result": true
     }
