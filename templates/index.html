@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rule Engine</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+        }
+        .button {
+            padding: 15px 25px;
+            margin: 10px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 20px;
+            display: none;
+            position: relative;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 20px;
+            color: #ccc;
+        }
+        .close:hover {
+            color: #ff0000;
+        }
+        .form-group {
+            margin: 10px 0;
+        }
+        input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .notification {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Rule Engine</h1>
+        <button class="button" id="create-rule-btn">Create Rule</button>
+        <button class="button" id="combine-rules-btn">Combine Rules</button>
+        <button class="button" id="evaluate-rule-btn">Evaluate Rule</button>
+
+        <!-- Create Rule Card -->
+        <div class="card" id="create-rule-card">
+            <span class="close" id="close-create-card">&times;</span>
+            <h2>Create Rule</h2>
+            <div class="form-group">
+                <input type="text" id="create-rule-name" placeholder="Rule Name" required>
+            </div>
+            <div class="form-group">
+                <input type="text" id="create-rule-string" placeholder="Rule (e.g., age > 30 AND salary > 3000)" required>
+            </div>
+            <button class="button" id="create-rule-submit">Create</button>
+            <button class="button" id="cancel-create-rule">Cancel</button>
+            <div class="notification" id="create-notification"></div>
+        </div>
+
+        <!-- Combine Rules Card -->
+        <div class="card" id="combine-rules-card">
+            <span class="close" id="close-combine-card">&times;</span>
+            <h2>Combine Rules</h2>
+            <div class="form-group">
+                <input type="text" id="combine-rule-name" placeholder="Combined Rule Name" required>
+            </div>
+            <div class="form-group">
+                <input type="text" id="combine-rule-list" placeholder="Rule Names to Combine (comma-separated)" required>
+            </div>
+            <div class="form-group">
+                <input type="text" id="combine-rule-operator" placeholder="AND/OR" required>
+            </div>
+            <button class="button" id="combine-rules-submit">Combine</button>
+            <button class="button" id="cancel-combine-rules">Cancel</button>
+            <div class="notification" id="combine-notification"></div>
+        </div>
+
+        <!-- Evaluate Rule Card -->
+        <div class="card" id="evaluate-rule-card">
+            <span class="close" id="close-evaluate-card">&times;</span>
+            <h2>Evaluate Rule</h2>
+            <div class="form-group">
+                <input type="text" id="evaluate-rule-name" placeholder="Rule Name" required>
+            </div>
+            <button class="button" id="evaluate-rule-submit">Evaluate</button>
+            <button class="button" id="cancel-evaluate-rule">Cancel</button>
+            <div class="notification" id="evaluate-notification"></div>
+        </div>
+    </div>
+
+    <script>
+        // Show and hide cards
+        function showCard(cardId) {
+            const card = document.getElementById(cardId);
+            card.style.display = 'block';
+        }
+
+        function hideCard(cardId) {
+            const card = document.getElementById(cardId);
+            card.style.display = 'none';
+            // Clear input fields
+            card.querySelectorAll('input[type="text"]').forEach(input => input.value = '');
+            // Clear notifications
+            card.querySelector('.notification').style.display = 'none';
+        }
+
+        document.getElementById('create-rule-btn').addEventListener('click', () => showCard('create-rule-card'));
+        document.getElementById('combine-rules-btn').addEventListener('click', () => showCard('combine-rules-card'));
+        document.getElementById('evaluate-rule-btn').addEventListener('click', () => showCard('evaluate-rule-card'));
+
+        // Close buttons for each card
+        document.getElementById('close-create-card').addEventListener('click', () => hideCard('create-rule-card'));
+        document.getElementById('close-combine-card').addEventListener('click', () => hideCard('combine-rules-card'));
+        document.getElementById('close-evaluate-card').addEventListener('click', () => hideCard('evaluate-rule-card'));
+
+        // Cancel buttons for each card
+        document.getElementById('cancel-create-rule').addEventListener('click', () => hideCard('create-rule-card'));
+        document.getElementById('cancel-combine-rules').addEventListener('click', () => hideCard('combine-rules-card'));
+        document.getElementById('cancel-evaluate-rule').addEventListener('click', () => hideCard('evaluate-rule-card'));
+
+        // Handle create rule submission
+        document.getElementById('create-rule-submit').addEventListener('click', function() {
+            const ruleName = document.getElementById('create-rule-name').value;
+            const ruleString = document.getElementById('create-rule-string').value;
+
+            fetch('/api/create_rule', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name: ruleName, rule: ruleString }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const notification = document.getElementById('create-notification');
+                notification.textContent = data.message || data.error;
+                notification.style.display = 'block';
+            });
+        });
+
+        // Handle combine rules submission
+        document.getElementById('combine-rules-submit').addEventListener('click', function() {
+            const ruleName = document.getElementById('combine-rule-name').value;
+            const ruleList = document.getElementById('combine-rule-list').value.split(',').map(rule => rule.trim());
+            const operator = document.getElementById('combine-rule-operator').value;
+
+            fetch('/api/combine_rules', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name: ruleName, rules: ruleList, operator: operator }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const notification = document.getElementById('combine-notification');
+                notification.textContent = data.message || data.error;
+                notification.style.display = 'block';
+            });
+        });
+
+        // Handle evaluate rule submission
+        document.getElementById('evaluate-rule-submit').addEventListener('click', function() {
+            const ruleName = document.getElementById('evaluate-rule-name').value;
+
+            fetch('/api/evaluate_rule', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name: ruleName }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const notification = document.getElementById('evaluate-notification');
+                notification.textContent = data.result !== undefined ? `Evaluation Result: ${data.result}` : data.error;
+                notification.style.display = 'block';
+            });
+        });
+    </script>
+</body>
+</html>
