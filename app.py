@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request, render_template, redirect, url_for
 import threading
-
+import os
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -161,3 +161,5 @@ if __name__ == "__main__":
     # Start the Flask app in a separate thread
     flask_thread = threading.Thread(target=run_flask)
     flask_thread.start()
+    port = int(os.environ.get("PORT", 5000))  # Use 5000 if PORT is not set
+    app.run(host="0.0.0.0", port=port)
